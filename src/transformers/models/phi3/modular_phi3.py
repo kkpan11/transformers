@@ -230,6 +230,9 @@ class Phi3RotaryEmbedding(MistralRotaryEmbedding):
                 )
             self.register_buffer("inv_freq", self.long_inv_freq, persistent=False)
         else:
+            # This .to() is needed if the model has been moved to a device after being initialized (because
+            # the buffer is automatically moved, but not the original copy)
+            self.original_inv_freq = self.original_inv_freq.to(device)
             self.register_buffer("inv_freq", self.original_inv_freq, persistent=False)
 
     @torch.no_grad()
@@ -309,3 +312,12 @@ class Phi3ForSequenceClassification(MistralForSequenceClassification):
 
 class Phi3ForTokenClassification(MistralForTokenClassification):
     pass
+
+
+__all__ = [
+    "Phi3PreTrainedModel",
+    "Phi3Model",  # noqa: F822
+    "Phi3ForCausalLM",
+    "Phi3ForSequenceClassification",
+    "Phi3ForTokenClassification",
+]
